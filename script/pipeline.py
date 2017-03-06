@@ -2,27 +2,18 @@ from __future__ import division
 import feedparser
 import pocket
 import time
-import schedule
-import datetime
 import pandas as pd
 from watson_developer_cloud import AlchemyLanguageV1
-import nltk, re, pprint
-from nltk import word_tokenize
 import pickle
-from datetime import datetime, timedelta
-from nltk import FreqDist
-from nltk import sent_tokenize
-from nltk import pos_tag
+from datetime import datetime
 from sklearn import preprocessing
 from sklearn import model_selection
 from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
-from urlparse import urlparse
-from collections import Counter
 
-feednames = ['theawl.', 'thehairpin.', 'thebillfold.', 'psmag.', 'polygon.', 'arstechnica.', 'politico.', 'fivethirtyeight.', 
+feednames = ['theawl.', 'thehairpin.', 'thebillfold.', 'psmag.', 'polygon.', 'arstechnica.', 'politico.', 'fivethirtyeight.',
             'nytimes.', 'thedailybeast', 'citylab.', 'newyorker.', 'motherboard.', 'atlasobscura.', 'digiday.', 'buzzfeed.',
             'longreads.', 'newrepublic.', 'theatlantic.', 'niemanlab.']
 
@@ -89,7 +80,7 @@ def get_urls():
 #Get text for articles
 def get_text():
     master = get_urls()
-    alco = AlchemyLanguageV1(api_key='***')
+    alco = AlchemyLanguageV1(api_key='IBM_KEY')
     all_articles = []
     j=1
     for i in master['Links']:
@@ -120,7 +111,7 @@ def get_probabilities():
 #Weight model
 def define_weights():
     master = get_probabilities()
-    weights_data = pd.DataFrame({'Frequency' : {'theawl.' : 246, 
+    weights_data = pd.DataFrame({'Frequency' : {'theawl.' : 246,
                                    'thehairpin.' : 36,
                                    'thebillfold.' : 12,
                                    'psmag.' : 1,
@@ -171,8 +162,8 @@ def apply_weights():
 def save_articles():
     master = apply_weights()
     savelinks = list(master['Links'].head(15))
-    consumer_key='***'
-    access_token='***'
+    consumer_key='POCKET_CONSUMER'
+    access_token='POCKET_ACCESS'
     pocket_instance = pocket.Pocket(consumer_key, access_token)
     #Save articles
     for i in savelinks:

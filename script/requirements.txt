@@ -1,0 +1,10 @@
+feedparser==5.2.1
+pocket==0.3.6
+pandas==0.18.1
+watson_developer_cloud==0.23.0
+pysolr==3.6.0
+requests==2.13.0
+python-dateutil==2.5.3
+six==1.10.0
+pytz==2016.6.1
+numpy=1.11.1
