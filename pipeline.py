@@ -7,12 +7,7 @@ import pandas as pd
 from watson_developer_cloud import AlchemyLanguageV1
 import pickle
 from datetime import datetime
-from sklearn import preprocessing
-from sklearn import model_selection
 from sklearn.svm import SVC
-from sklearn.pipeline import Pipeline
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
 
 feednames = ['theawl.', 'thehairpin.', 'thebillfold.', 'psmag.', 'polygon.', 'arstechnica.', 'politico.', 'fivethirtyeight.',
             'nytimes.', 'thedailybeast', 'citylab.', 'newyorker.', 'motherboard.', 'atlasobscura.', 'digiday.', 'buzzfeed.',
