@@ -4,6 +4,7 @@ import feedparser
 import pocket
 import time
 import pandas as pd
+from pytz import timezone
 from watson_developer_cloud import AlchemyLanguageV1
 import pickle
 from datetime import datetime
@@ -63,13 +64,14 @@ def get_urls():
         except:
             dates_days.append('')
             pass
-    today = datetime.today().strftime("%d")
-    today = int(today)
+    today = datetime.now()
+    today_central = timezone('US/Central').localize(today)
+    today_central = int(today_central.strftime('%d'))
 
     master = pd.DataFrame()
     master['Links'] = links
     master['Dates'] = dates_days
-    master = master.loc[master['Dates'] == today]
+    master = master.loc[master['Dates'] == today_central]
     master = master.reset_index(drop=True)
     return master
 
