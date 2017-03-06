@@ -1,4 +1,5 @@
 from __future__ import division
+import os
 import feedparser
 import pocket
 import time
@@ -80,7 +81,7 @@ def get_urls():
 #Get text for articles
 def get_text():
     master = get_urls()
-    alco = AlchemyLanguageV1(api_key='IBM_KEY')
+    alco = AlchemyLanguageV1(api_key = os.environ.get('IBM_KEY'))
     all_articles = []
     j=1
     for i in master['Links']:
@@ -162,8 +163,8 @@ def apply_weights():
 def save_articles():
     master = apply_weights()
     savelinks = list(master['Links'].head(15))
-    consumer_key='POCKET_CONSUMER'
-    access_token='POCKET_ACCESS'
+    consumer_key = os.environ.get('POCKET_CONSUMER')
+    access_token = os.environ.get('POCKET_ACCESS')
     pocket_instance = pocket.Pocket(consumer_key, access_token)
     #Save articles
     for i in savelinks:
