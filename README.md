@@ -6,3 +6,5 @@ A Python script that uses machine learning to automatically save news articles t
 [Update one](https://medium.com/@nicholashagar/automated-reading-list-week-1-bdc8c631f04#.s6tpv8sgb)
 
 [Update two](https://medium.com/@nicholashagar/automated-reading-list-update-2-a-big-ol-redo-ed83fc5076b9#.si381lg1f)
+
+[Update three](https://medium.com/@nicholashagar/automated-reading-list-update-3-it-works-e6140f8e4ebe#.mtq3j4bwg)
