@@ -153,6 +153,8 @@ def apply_weights():
                 row = master.loc[master['Links'] == i]
                 weighted_probability = row['Probabilities'].values[0] + row['Probabilities'].values[0] * weight['Time Weights']
                 weighted_probs.append(weighted_probability)
+            else:
+                weighted_probs.append('')
     master['Weighted Probabilities'] = weighted_probs
     master = master.sort_values('Weighted Probabilities', ascending=False)
     return master
