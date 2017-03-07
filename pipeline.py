@@ -94,7 +94,6 @@ def get_text():
             all_articles.append('')
             pass
     master['Text'] = all_articles
-    pickle.dump(master, open('df_TestSaving.p', 'wb'))
     return master
 
 #Predict on model
@@ -145,17 +144,13 @@ def define_weights():
 
 def apply_weights():
     weights_data, master = define_weights()
-    weighted_probs = []
-    for i in master['Links']:
+    for i, row in master.iterrows():
+        weighted_probability = 0
         for j in feednames:
-            if j in i:
+            if j in row['Links']:
                 weight = weights_data.loc[j]
-                row = master.loc[master['Links'] == i]
-                weighted_probability = row['Probabilities'].values[0] + row['Probabilities'].values[0] * weight['Time Weights']
-                weighted_probs.append(weighted_probability)
-            else:
-                weighted_probs.append('')
-    master['Weighted Probabilities'] = weighted_probs
+                weighted_probability = row['Probabilities'] + row['Probabilities'] * weight['Time Weights']
+        master.set_value(i, 'Weighted Probabilities', weighted_probability)
     master = master.sort_values('Weighted Probabilities', ascending=False)
     return master
 
