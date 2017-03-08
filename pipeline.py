@@ -1,3 +1,4 @@
+print 'sweet ops'
 from __future__ import division
 import os
 import feedparser
