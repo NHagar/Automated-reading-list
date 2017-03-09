@@ -8,7 +8,7 @@ from pytz import timezone
 from watson_developer_cloud import AlchemyLanguageV1
 import pickle
 from datetime import datetime
-from sklearn.svm import SVC
+
 
 feednames = ['theawl.', 'thehairpin.', 'thebillfold.', 'psmag.', 'polygon.', 'arstechnica.', 'politico.', 'fivethirtyeight.',
             'nytimes.', 'thedailybeast', 'citylab.', 'newyorker.', 'motherboard.', 'atlasobscura.', 'digiday.', 'buzzfeed.',
@@ -77,7 +77,7 @@ def get_text():
 
 #Predict on model
 def get_probabilities():
-    master = pd.read_pickle('optimization.p')
+    master = get_text()
     model_trained = pickle.load(open('trained_model_new.p', 'rb'))
     predictions = model_trained.predict_proba(master['Text'])
     master['Probabilities'] = [i[1][1] for i in enumerate(predictions)]
