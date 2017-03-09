@@ -37,40 +37,34 @@ def get_urls():
     'https://www.buzzfeed.com/reader.xml',
     'https://longreads.com/feed/',
     'https://newrepublic.com/rss.xml']
-    parsed = []
-    for l in urls:
-        parsed.append(feedparser.parse(l).entries)
+    parsed = [feedparser.parse(l).entries for l in urls]
     links = []
     dates = []
+    #Links
     for i in parsed:
         for j in i:
             try:
                 links.append(j['links'][0]['href'])
             except:
                 links.append('')
-                pass
+    #Dates
     for i in parsed:
         for j in i:
             try:
                 dates.append(j['updated_parsed'])
             except:
                 dates.append('')
-                pass
     dates_days = []
     dates = [i[0:3] for i in dates]
+    #Day of the month
     for i in dates:
         try:
             dates_days.append(i[2])
         except:
             dates_days.append('')
-            pass
-    today = datetime.now()
-    today_central = timezone('US/Central').localize(today)
-    today_central = int(today_central.strftime('%d'))
-
-    master = pd.DataFrame()
-    master['Links'] = links
-    master['Dates'] = dates_days
+    #Make dataframe, limit to today
+    today_central = int(timezone('US/Central').localize(datetime.now()).strftime('%d'))
+    master = pd.DataFrame({'Links' : links, 'Dates' : dates_days})
     master = master.loc[master['Dates'] == today_central]
     master = master.reset_index(drop=True)
     return master
@@ -78,31 +72,15 @@ def get_urls():
 #Get text for articles
 def get_text():
     master = get_urls()
-    alco = AlchemyLanguageV1(api_key = os.environ.get('IBM_KEY'))
-    all_articles = []
-    j=1
-    for i in master['Links']:
-        try:
-            text = alco.text(url=i)
-            all_articles.append(text['text'])
-            print "Done %s of %s" % (j, len(master['Links']))
-            j+=1
-            time.sleep(1)
-        except:
-            print ":("
-            j+=1
-            all_articles.append('')
-            pass
-    master['Text'] = all_articles
+    master['Text'] = 'test text'
     return master
 
 #Predict on model
 def get_probabilities():
-    master = get_text()
+    master = pd.read_pickle('optimization.p')
     model_trained = pickle.load(open('trained_model_new.p', 'rb'))
     predictions = model_trained.predict_proba(master['Text'])
-    predict_list = [i[1][1] for i in enumerate(predictions)]
-    master['Probabilities'] = predict_list
+    master['Probabilities'] = [i[1][1] for i in enumerate(predictions)]
     return master
 
 #Weight model
@@ -130,9 +108,7 @@ def define_weights():
                                     'niemanlab.' : 48}})
     weights_data['Percent'] = weights_data['Frequency'] / sum(weights_data['Frequency'])
     weeks = [111, 111, 111, 109, 111, 109, 55, 104, 55, 108, 31, 55, 29, 55, 55, 55, 8, 55, 3, 2]
-    probs = [master[master['Links'].str.contains(i)].mean() for i in feednames]
-    probs = [i.values[0] for i in probs]
-    weights_data['Probability'] = probs
+    weights_data['Probability'] = [master[master['Links'].str.contains(i)].mean().values[0] for i in feednames]
     weights_data['Weights'] = weights_data['Percent'] * weights_data['Probability']
     weights_data = weights_data.sort_values('Weights', ascending=False)
     weights_data['Weeks'] = weeks
@@ -164,5 +140,3 @@ def save_articles():
     for i in savelinks:
         pocket_instance.add(i)
         print "article saved"
-
-save_articles()
