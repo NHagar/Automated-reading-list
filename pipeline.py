@@ -128,7 +128,7 @@ def define_weights():
     weights_data['Weeks'] = weeks
     weights_data['Articles per Week'] = weights_data['Frequency'] / weights_data['Weeks']
     weights_data['Time Percent'] = weights_data['Articles per Week'] / sum(weights_data['Articles per Week'])
-    weights_data['Time Weights'] = weights_data['Time Percent'] * weights_data['Probability'] * 2
+    weights_data['Time Weights'] = weights_data['Time Percent'] * weights_data['Probability']
     weights_data = weights_data.sort_values('Time Weights', ascending=False)
     return weights_data, master
 
