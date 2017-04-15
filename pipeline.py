@@ -39,28 +39,20 @@ def get_urls():
     parsed = [feedparser.parse(l).entries for l in urls]
     links = []
     dates = []
-    #Links
-    for i in parsed:
-        for j in i:
-            try:
-                links.append(j['links'][0]['href'])
-            except:
-                links.append('')
-    #Dates
+    #Links and dates
     for i in parsed:
         for j in i:
             try:
                 dates.append(j['updated_parsed'])
+                links.append(j['links'][0]['href'])
             except:
-                dates.append('')
+                pass
+
     dates_days = []
     dates = [i[0:3] for i in dates]
     #Day of the month
     for i in dates:
-        try:
-            dates_days.append(i[2])
-        except:
-            dates_days.append('')
+        dates_days.append(i[2])
     #Make dataframe, limit to today
     today_central = int(timezone('US/Central').localize(datetime.now()).strftime('%d'))
     master = pd.DataFrame({'Links' : links, 'Dates' : dates_days})
