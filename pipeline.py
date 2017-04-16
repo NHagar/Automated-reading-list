@@ -43,8 +43,11 @@ def get_urls():
     for i in parsed:
         for j in i:
             try:
-                dates.append(j['updated_parsed'])
-                links.append(j['links'][0]['href'])
+                if j['updated_parsed'] == None:
+                    pass
+                else:
+                    dates.append(j['updated_parsed'])
+                    links.append(j['links'][0]['href'])
             except:
                 pass
 
