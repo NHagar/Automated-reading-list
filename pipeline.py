@@ -92,56 +92,10 @@ def get_probabilities():
     master['Probabilities'] = predict_list
     return master
 
-#Weight model
-def define_weights():
-    master = get_probabilities()
-    weights_data = pd.DataFrame({'Frequency' : {'theawl.' : 246,
-                                   'thehairpin.' : 36,
-                                   'thebillfold.' : 12,
-                                   'psmag.' : 1,
-                                   'polygon.' : 86,
-                                   'arstechnica.' : 30,
-                                   'politico.' : 199,
-                                   'fivethirtyeight.' : 31,
-                                   'nytimes.' : 288,
-                                   'thedailybeast' : 58,
-                                   'citylab.' : 63,
-                                   'newyorker.' : 166,
-                                   'motherboard.' : 40,
-                                   'atlasobscura.' : 42,
-                                   'digiday.' : 18,
-                                   'buzzfeed.' : 33,
-                                   'longreads.' : 6,
-                                   'newrepublic.' : 2,
-                                    'theatlantic.': 126,
-                                    'niemanlab.' : 48}})
-    weights_data['Percent'] = weights_data['Frequency'] / sum(weights_data['Frequency'])
-    weeks = [111, 111, 111, 109, 111, 109, 55, 104, 55, 108, 31, 55, 29, 55, 55, 55, 8, 55, 3, 2]
-    weights_data['Probability'] = [master[master['Links'].str.contains(i)].mean().values[0] for i in feednames]
-    weights_data['Weights'] = weights_data['Percent'] * weights_data['Probability']
-    weights_data = weights_data.sort_values('Weights', ascending=False)
-    weights_data['Weeks'] = weeks
-    weights_data['Articles per Week'] = weights_data['Frequency'] / weights_data['Weeks']
-    weights_data['Time Percent'] = weights_data['Articles per Week'] / sum(weights_data['Articles per Week'])
-    weights_data['Time Weights'] = weights_data['Time Percent'] * weights_data['Probability']
-    weights_data = weights_data.sort_values('Time Weights', ascending=False)
-    return weights_data, master
-
-def apply_weights():
-    weights_data, master = define_weights()
-    for i, row in master.iterrows():
-        weighted_probability = 0
-        for j in feednames:
-            if j in row['Links']:
-                weight = weights_data.loc[j]
-                weighted_probability = row['Probabilities'] + row['Probabilities'] * weight['Time Weights']
-        master.set_value(i, 'Weighted Probabilities', weighted_probability)
-    master = master.sort_values('Weighted Probabilities', ascending=False)
-    return master
-
 def save_articles():
-    master = apply_weights()
-    savelinks = list(master['Links'].head(15))
+    master = get_probabilities()
+    master = master.sort_values('Probabilities', ascending=False)
+    savelinks = list(master['Links'].sample(n=15, weights=master['Probabilities']))
     consumer_key = os.environ.get('POCKET_CONSUMER')
     access_token = os.environ.get('POCKET_ACCESS')
     pocket_instance = pocket.Pocket(consumer_key, access_token)
