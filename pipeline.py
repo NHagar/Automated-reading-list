@@ -9,10 +9,6 @@ from watson_developer_cloud import AlchemyLanguageV1
 import pickle
 from datetime import datetime
 
-feednames = ['theawl.', 'thehairpin.', 'thebillfold.', 'psmag.', 'polygon.', 'arstechnica.', 'politico.', 'fivethirtyeight.',
-            'nytimes.', 'thedailybeast', 'citylab.', 'newyorker.', 'motherboard.', 'atlasobscura.', 'digiday.', 'buzzfeed.',
-            'longreads.', 'newrepublic.', 'theatlantic.', 'niemanlab.']
-
 #Get URLS for articles
 def get_urls():
     urls = ['http://www.theatlantic.com/feed/all/',
@@ -93,9 +89,8 @@ def get_probabilities():
     return master
 
 def save_articles():
-    master = get_probabilities()
-    master = master.sort_values('Probabilities', ascending=False)
-    savelinks = list(master['Links'].sample(n=15, weights=master['Probabilities']))
+    master = get_probabilities().sample(n=15, weights=master['Probabilities'])
+    savelinks = list(master['Links'])
     consumer_key = os.environ.get('POCKET_CONSUMER')
     access_token = os.environ.get('POCKET_ACCESS')
     pocket_instance = pocket.Pocket(consumer_key, access_token)
