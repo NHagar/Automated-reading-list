@@ -89,7 +89,8 @@ def get_probabilities():
     return master
 
 def save_articles():
-    master = get_probabilities().sample(n=15, weights=master['Probabilities'])
+    master = get_probabilities()
+    master = master.sample(n=15, weights=master['Probabilities'])
     savelinks = list(master['Links'])
     consumer_key = os.environ.get('POCKET_CONSUMER')
     access_token = os.environ.get('POCKET_ACCESS')
